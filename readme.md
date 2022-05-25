@@ -24,6 +24,7 @@
 ----- Componentes: Clases: Component / Cada componente
 
 --- Header
+--- Menu (Home / About)
 --- Footer
 --- Lista
 --- Item (tarea)
