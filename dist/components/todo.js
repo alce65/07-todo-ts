@@ -1,4 +1,5 @@
 import { TASKS } from '../models/data.js';
+import { AddTask } from './addTask.js';
 import { Component } from './component.js';
 export class Todo extends Component {
     selector;
@@ -10,13 +11,18 @@ export class Todo extends Component {
         this.template = this.createTemplate();
         this.render(selector);
         this.manageComponent();
+        new AddTask('slot.addTask');
     }
     createTemplate() {
         let html = `
-        <h2>ToDo list</h2><ul class="task-list">`;
+        <h2>ToDo list</h2>
+        <slot class="addTask"></slot>
+        <ul class="task-list">`;
         this.tasks.forEach((item) => {
             html += `<li>
-            <span><input type="checkbox" ${item.isComplete && 'checked'}></span>
+            <span><input type="checkbox" 
+            data-id="${item.id}"
+            ${item.isComplete && 'checked'}></span>
             <span>${item.name}</span>
             <span> - </span> 
             <span>${item.responsible}<span>
@@ -31,6 +37,9 @@ export class Todo extends Component {
         document
             .querySelectorAll('.button')
             .forEach((item) => item.addEventListener('click', this.handlerButton.bind(this)));
+        document
+            .querySelectorAll('[type=checkbox]')
+            .forEach((item) => item.addEventListener('change', this.handlerChange.bind(this)));
     }
     handlerButton(ev) {
         const deletedId = ev.target.dataset.id;
@@ -39,5 +48,17 @@ export class Todo extends Component {
         this.template = this.createTemplate();
         this.render(this.selector);
         this.manageComponent();
+    }
+    handlerChange(ev) {
+        const changeId = ev.target.dataset.id;
+        console.log('change', changeId);
+        this.tasks = this.tasks.map((item) => ({
+            ...item,
+            isComplete: item.id === changeId ? !item.isComplete : item.isComplete,
+        }));
+        this.template = this.createTemplate();
+        this.render(this.selector);
+        this.manageComponent();
+        console.log(this.tasks);
     }
 }

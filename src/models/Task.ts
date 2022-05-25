@@ -11,15 +11,15 @@ import { v4 as uuid } from 'uuid';
 // (false);implements iTask
 
 export class Task {
-    id: string;
-    isComplete: boolean;
-    constructor(public name: string, public responsible: string) {
-        this.id = this.generateId();
-        this.isComplete = false;
-    }
-    private generateId(): string {
+    static generateId(): string {
         // error
         // return uuid();
         return String(Math.floor(Math.random() * 10_000_000));
+    }
+    id: string;
+    isComplete: boolean;
+    constructor(public name: string, public responsible: string) {
+        this.id = Task.generateId();
+        this.isComplete = false;
     }
 }

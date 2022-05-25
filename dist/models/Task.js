@@ -8,17 +8,17 @@
 export class Task {
     name;
     responsible;
+    static generateId() {
+        // error
+        // return uuid();
+        return String(Math.floor(Math.random() * 10_000_000));
+    }
     id;
     isComplete;
     constructor(name, responsible) {
         this.name = name;
         this.responsible = responsible;
-        this.id = this.generateId();
+        this.id = Task.generateId();
         this.isComplete = false;
-    }
-    generateId() {
-        // error
-        // return uuid();
-        return String(Math.floor(Math.random() * 10_000_000));
     }
 }
