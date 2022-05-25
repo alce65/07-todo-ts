@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-import { v4 as uuidv4 } from 'uuid';
 // export interface iTask {
 //     id: string;
 //     name: string;
@@ -19,6 +17,8 @@ export class Task {
         this.isComplete = false;
     }
     generateId() {
-        return uuidv4();
+        // error
+        // return uuid();
+        return String(Math.floor(Math.random() * 10_000_000));
     }
 }
