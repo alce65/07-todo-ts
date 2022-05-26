@@ -2,10 +2,10 @@
 import { iComponent } from '../interfaces/component.js';
 import { TASKS } from '../models/data.js';
 import { Task } from '../models/task.js';
-import { AddTask } from './addTask.js';
+import { AddTask } from './add-task.js';
 import { Component } from './component.js';
 
-export class Todo extends Component implements iComponent {
+export class TodoList extends Component implements iComponent {
     tasks: Array<Task>;
     constructor(public selector: string) {
         super();
