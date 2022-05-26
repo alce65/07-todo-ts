@@ -8,10 +8,7 @@ export class Todo extends Component {
         super();
         this.selector = selector;
         this.tasks = TASKS;
-        this.template = this.createTemplate();
-        this.render(selector);
-        this.manageComponent();
-        new AddTask('slot.addTask');
+        this.updateComponent();
     }
     createTemplate() {
         let html = `
@@ -41,13 +38,18 @@ export class Todo extends Component {
             .querySelectorAll('[type=checkbox]')
             .forEach((item) => item.addEventListener('change', this.handlerChange.bind(this)));
     }
+    updateComponent() {
+        this.template = this.createTemplate();
+        this.render(this.selector);
+        this.manageComponent();
+        console.log(this.tasks);
+        new AddTask('slot.addTask', this.addTask.bind(this));
+    }
     handlerButton(ev) {
         const deletedId = ev.target.dataset.id;
         console.log('click', deletedId);
         this.tasks = this.tasks.filter((item) => item.id !== deletedId);
-        this.template = this.createTemplate();
-        this.render(this.selector);
-        this.manageComponent();
+        this.updateComponent();
     }
     handlerChange(ev) {
         const changeId = ev.target.dataset.id;
@@ -56,9 +58,11 @@ export class Todo extends Component {
             ...item,
             isComplete: item.id === changeId ? !item.isComplete : item.isComplete,
         }));
-        this.template = this.createTemplate();
-        this.render(this.selector);
-        this.manageComponent();
-        console.log(this.tasks);
+        this.updateComponent();
+    }
+    addTask(task) {
+        // this.tasks = [...this.tasks, task];
+        this.tasks.push(task);
+        this.updateComponent();
     }
 }

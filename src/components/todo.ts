@@ -10,10 +10,7 @@ export class Todo extends Component implements iComponent {
     constructor(public selector: string) {
         super();
         this.tasks = TASKS;
-        this.template = this.createTemplate();
-        this.render(selector);
-        this.manageComponent();
-        new AddTask('slot.addTask');
+        this.updateComponent();
     }
     createTemplate() {
         let html = `
@@ -47,13 +44,18 @@ export class Todo extends Component implements iComponent {
                 item.addEventListener('change', this.handlerChange.bind(this))
             );
     }
+    private updateComponent() {
+        this.template = this.createTemplate();
+        this.render(this.selector);
+        this.manageComponent();
+        console.log(this.tasks);
+        new AddTask('slot.addTask', this.addTask.bind(this));
+    }
     private handlerButton(ev: Event) {
         const deletedId = (<HTMLElement>ev.target).dataset.id;
         console.log('click', deletedId);
         this.tasks = this.tasks.filter((item) => item.id !== deletedId);
-        this.template = this.createTemplate();
-        this.render(this.selector);
-        this.manageComponent();
+        this.updateComponent();
     }
 
     private handlerChange(ev: Event) {
@@ -64,9 +66,12 @@ export class Todo extends Component implements iComponent {
             isComplete:
                 item.id === changeId ? !item.isComplete : item.isComplete,
         }));
-        this.template = this.createTemplate();
-        this.render(this.selector);
-        this.manageComponent();
-        console.log(this.tasks);
+        this.updateComponent();
+    }
+
+    public addTask(task: Task) {
+        // this.tasks = [...this.tasks, task];
+        this.tasks.push(task);
+        this.updateComponent();
     }
 }

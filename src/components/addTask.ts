@@ -4,7 +4,7 @@ import { Task } from '../models/task.js';
 import { Component } from './component.js';
 
 export class AddTask extends Component implements iComponent {
-    constructor(selector: string) {
+    constructor(selector: string, public add: Function) {
         super();
         this.template = this.createTemplate();
         this.render(selector);
@@ -15,7 +15,7 @@ export class AddTask extends Component implements iComponent {
         <h3>Añadir tarea</> 
         <form action="">
             <input type="text" name="name" id="name"
-            placeholder="describe la tarea">
+            placeholder="describe la tarea" required>
             <input type="text" name="responsible" 
             placeholder="responsable de la tarea"
             id="responsible">
@@ -29,15 +29,12 @@ export class AddTask extends Component implements iComponent {
             ?.addEventListener('submit', this.handlerSubmit.bind(this));
     }
     private handlerSubmit(ev: Event) {
-        let data: any = {};
+        let data: [string, string] = ['', ''];
         ev.preventDefault();
 
-        document.querySelectorAll('form input').forEach((item) => {
-            const field: string = (<HTMLFormElement>item).name;
-            if (typeof (<HTMLFormElement>item).value === 'string') {
-                data[field] = (<HTMLFormElement>item).value;
-            }
+        document.querySelectorAll('form input').forEach((item, i) => {
+            data[i] = (<HTMLFormElement>item).value;
         });
-        console.log('Guardado', new Task(data.name, data.responsible));
+        this.add(new Task(...data));
     }
 }
