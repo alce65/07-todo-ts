@@ -1,13 +1,15 @@
-import { TASKS } from '../models/data.js';
+// import * as store from '../services/store.js';
+import { StoreClass } from '../services/store.class.js';
 import { AddTask } from './add-task.js';
 import { Component } from './component.js';
+import { ItemTask } from './task.js';
 export class TodoList extends Component {
     selector;
     tasks;
     constructor(selector) {
         super();
         this.selector = selector;
-        this.tasks = TASKS;
+        this.tasks = new StoreClass().getTasks();
         this.updateComponent();
     }
     createTemplate() {
@@ -16,16 +18,7 @@ export class TodoList extends Component {
         <slot class="addTask"></slot>
         <ul class="task-list">`;
         this.tasks.forEach((item) => {
-            html += `<li>
-            <span><input type="checkbox" 
-            data-id="${item.id}"
-            ${item.isComplete && 'checked'}></span>
-            <span>${item.name}</span>
-            <span> - </span> 
-            <span>${item.responsible}<span>
-            <span class="button" role="button" 
-            data-id="${item.id}">🗑️</span>
-            </li>`;
+            html += new ItemTask('', item).template;
         });
         html += `</ul>`;
         return html;
@@ -42,7 +35,7 @@ export class TodoList extends Component {
         this.template = this.createTemplate();
         this.render(this.selector);
         this.manageComponent();
-        console.log(this.tasks);
+        new StoreClass().setTasks(this.tasks);
         new AddTask('slot.addTask', this.addTask.bind(this));
     }
     handlerButton(ev) {

@@ -5,7 +5,7 @@
 //     isComplete: boolean;
 // }
 // (false);implements iTask
-export class Task {
+export class TaskModel {
     name;
     responsible;
     static generateId() {
@@ -18,7 +18,7 @@ export class Task {
     constructor(name, responsible) {
         this.name = name;
         this.responsible = responsible;
-        this.id = Task.generateId();
+        this.id = TaskModel.generateId();
         this.isComplete = false;
     }
 }
