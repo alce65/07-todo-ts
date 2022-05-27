@@ -1,18 +1,22 @@
 /* eslint-disable no-unused-vars */
 import { iComponent } from '../interfaces/component.js';
 import { TaskModel } from '../models/task.js';
+import { HttpStoreClass } from '../services/http.store.class.js';
 // import * as store from '../services/store.js';
 import { StoreClass } from '../services/store.class.js';
+
 import { AddTask } from './add-task.js';
 import { Component } from './component.js';
 import { ItemTask } from './task.js';
 
 export class TodoList extends Component implements iComponent {
-    tasks: Array<TaskModel>;
+    tasks!: Array<TaskModel>;
     constructor(public selector: string) {
         super();
-        this.tasks = new StoreClass().getTasks();
-        this.updateComponent();
+        new HttpStoreClass().getTasks().then((tasks) => {
+            this.tasks = tasks;
+            this.updateComponent();
+        });
     }
     createTemplate() {
         let html = `
@@ -41,7 +45,7 @@ export class TodoList extends Component implements iComponent {
         this.template = this.createTemplate();
         this.render(this.selector);
         this.manageComponent();
-        new StoreClass().setTasks(this.tasks);
+
         new AddTask('slot.addTask', this.addTask.bind(this));
     }
     private handlerButton(ev: Event) {
@@ -64,7 +68,9 @@ export class TodoList extends Component implements iComponent {
 
     public addTask(task: TaskModel) {
         // this.tasks = [...this.tasks, task];
-        this.tasks.push(task);
-        this.updateComponent();
+        new HttpStoreClass().setTask(task).then((task) => {
+            this.tasks.push(task);
+            this.updateComponent();
+        });
     }
 }

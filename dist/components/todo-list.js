@@ -1,5 +1,4 @@
-// import * as store from '../services/store.js';
-import { StoreClass } from '../services/store.class.js';
+import { HttpStoreClass } from '../services/http.store.class.js';
 import { AddTask } from './add-task.js';
 import { Component } from './component.js';
 import { ItemTask } from './task.js';
@@ -9,8 +8,10 @@ export class TodoList extends Component {
     constructor(selector) {
         super();
         this.selector = selector;
-        this.tasks = new StoreClass().getTasks();
-        this.updateComponent();
+        new HttpStoreClass().getTasks().then((tasks) => {
+            this.tasks = tasks;
+            this.updateComponent();
+        });
     }
     createTemplate() {
         let html = `
@@ -35,7 +36,6 @@ export class TodoList extends Component {
         this.template = this.createTemplate();
         this.render(this.selector);
         this.manageComponent();
-        new StoreClass().setTasks(this.tasks);
         new AddTask('slot.addTask', this.addTask.bind(this));
     }
     handlerButton(ev) {
@@ -55,7 +55,9 @@ export class TodoList extends Component {
     }
     addTask(task) {
         // this.tasks = [...this.tasks, task];
-        this.tasks.push(task);
-        this.updateComponent();
+        new HttpStoreClass().setTask(task).then((task) => {
+            this.tasks.push(task);
+            this.updateComponent();
+        });
     }
 }
