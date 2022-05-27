@@ -26,10 +26,20 @@ export class HttpStoreClass {
             },
         }).then((response) => response.json());
     }
-    updateTask() {
+    updateTask(task: TaskModel): Promise<TaskModel> {
         // PUT / PATCH
+        return fetch(this.url + `/${task.id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(task),
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then((response) => response.json());
     }
-    deleteTask() {
+    deleteTask(id: string): Promise<number> {
         // DELETE
+        return fetch(this.url + `/${id}`, {
+            method: 'DELETE',
+        }).then((response) => response.status);
     }
 }

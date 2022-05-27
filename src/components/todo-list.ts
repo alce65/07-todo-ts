@@ -11,9 +11,11 @@ import { ItemTask } from './task.js';
 
 export class TodoList extends Component implements iComponent {
     tasks!: Array<TaskModel>;
+    storeService: HttpStoreClass;
     constructor(public selector: string) {
         super();
-        new HttpStoreClass().getTasks().then((tasks) => {
+        this.storeService = new HttpStoreClass();
+        this.storeService.getTasks().then((tasks) => {
             this.tasks = tasks;
             this.updateComponent();
         });
@@ -49,26 +51,35 @@ export class TodoList extends Component implements iComponent {
         new AddTask('slot.addTask', this.addTask.bind(this));
     }
     private handlerButton(ev: Event) {
-        const deletedId = (<HTMLElement>ev.target).dataset.id;
-        console.log('click', deletedId);
-        this.tasks = this.tasks.filter((item) => item.id !== deletedId);
-        this.updateComponent();
+        const deletedId = (<HTMLElement>ev.target).dataset.id as string;
+        this.storeService.deleteTask(deletedId).then((status) => {
+            if (status === 200) {
+                this.tasks = this.tasks.filter((item) => item.id !== deletedId);
+                this.updateComponent();
+            }
+        });
     }
 
     private handlerChange(ev: Event) {
         const changeId = (<HTMLElement>ev.target).dataset.id;
         console.log('change', changeId);
-        this.tasks = this.tasks.map((item) => ({
-            ...item,
-            isComplete:
-                item.id === changeId ? !item.isComplete : item.isComplete,
-        }));
-        this.updateComponent();
+        const task = this.tasks.find(
+            (item) => item.id === changeId
+        ) as TaskModel;
+        task.isComplete = !task.isComplete;
+        this.storeService.updateTask(task).then((task) => {
+            this.tasks = this.tasks.map((item) => ({
+                ...item,
+                isComplete:
+                    item.id === changeId ? !item.isComplete : item.isComplete,
+            }));
+            this.updateComponent();
+        });
     }
 
     public addTask(task: TaskModel) {
         // this.tasks = [...this.tasks, task];
-        new HttpStoreClass().setTask(task).then((task) => {
+        this.storeService.setTask(task).then((task) => {
             this.tasks.push(task);
             this.updateComponent();
         });
